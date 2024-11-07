@@ -4,7 +4,7 @@ This Shiny application allows users to explore various baby drop-in activities a
 
 ### Link to the App
 
-*You can access the running instance of the Shiny app here.*
+[*Access the activities Shiny app here.*](https://jennychang.shinyapps.io/activities/)
 
 ### Dataset
 
