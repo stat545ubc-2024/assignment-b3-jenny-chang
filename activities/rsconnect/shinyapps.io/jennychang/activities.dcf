@@ -1,0 +1,10 @@
+name: activities
+title:
+username: jennychang
+account: jennychang
+server: shinyapps.io
+hostUrl: https://api.shinyapps.io/v1
+appId: 13269228
+bundleId: 9330733
+url: https://jennychang.shinyapps.io/activities/
+version: 1
