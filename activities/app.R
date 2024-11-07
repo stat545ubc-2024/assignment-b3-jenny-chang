@@ -21,16 +21,16 @@ ui <- fluidPage(
   titlePanel("Baby Drop-in Activities in West Side Vancouver"),
   sidebarLayout(
     sidebarPanel(
-###### 1. Select Input: Allows the user to choose a single type of activity to filter the data. ######
+###### FEATURE 1. Select Input: Allows the user to choose a single type of activity to filter the data. ######
       selectInput("typeInput", "Activity",
-                  choices = c("All", "Babytime", "Storytime", "Family Playtime", "Open gym", "Gymnastics", "Mama papa goose", "Music"),
+                  choices = c("All", "Babytime", "Storytime", "Family playtime", "Open gym", "Gymnastics", "Mama papa goose", "Music"),
                   selected = "All"),
       
-###### 2. Checkbox Group Input: Allows the user to select multiple days of the week to filter the data. ######
+# Checkbox Group Input: Allows the user to select multiple days of the week to filter the data. 
       checkboxGroupInput("dayInput", "Day of the week",
                          choices = day_order),
       
-###### 3. Slider Input: Allows the user to filter activities by start time using a range slider. ######
+# Slider Input: Allows the user to filter activities by start time using a range slider. 
       sliderInput("timeInput", "Start time", 
                   min = as.POSIXct("09:00", format = "%H:%M"), 
                   max = as.POSIXct("16:00", format = "%H:%M"), 
@@ -39,10 +39,10 @@ ui <- fluidPage(
                   timeFormat = "%H:%M",
                   step = 1800),
       
-###### 4. Text input: Allows the user search for activities/locations via keyword search. ######
+# 4. Text input: Allows the user search for activities/locations via keyword search.
       textInput("searchInput", "Search by keyword", value = ""),  
 
-###### 5. Action button: Allows the user to reset the inputs. ######
+# 5. Action button: Allows the user to reset the inputs.
       actionButton("reset", "Reset", class = "btn-primary") 
     ),
     mainPanel(
