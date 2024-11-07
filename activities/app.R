@@ -24,7 +24,7 @@ ui <- fluidPage(
 
 ###### 1. Select Input: Allows the user to choose a single type of activity to filter the data. ######
       selectInput("typeInput", "Activity",
-                  choices = c("All", "Babytime", "Storytime", "Family Playtime", "Open gym", "Gymnastics", "Mama papa goose", "Music"),
+                  choices = c("All", "Babytime", "Storytime", "Family playtime", "Open gym", "Gymnastics", "Mama papa goose", "Music"),
                   selected = "All"),
 ###### 2. Checkbox Group Input: Allows the user to select multiple days of the week to filter the data. ######
       checkboxGroupInput("dayInput", "Day of the week",
