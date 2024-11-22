@@ -1,6 +1,6 @@
 ### Overview
 
-This Shiny application allows users to explore various baby drop-in activities available in West Side Vancouver. The app provides an interactive interface to filter and view activities based on selected criteria, including activity type, day of the week, start time, keyword search, and a downloadable .csv.
+This Shiny application allows users to explore various baby drop-in activities available in West Side Vancouver. The app provides an interactive interface to filter and view activities based on selected criteria, including activity type, day of the week, start time, keyword search, and a downloadable .csv. The folder activities contains the dataset `activities.csv` and the code for the app `app.R`. 
 
 ### Link to the App
 
