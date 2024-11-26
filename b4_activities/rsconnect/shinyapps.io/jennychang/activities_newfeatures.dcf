@@ -1,0 +1,12 @@
+name: activities_newfeatures
+title: activities_newfeatures
+username: jennychang
+account: jennychang
+server: shinyapps.io
+hostUrl: https://api.shinyapps.io/v1
+appId: 13458053
+bundleId: 9421395
+url: https://jennychang.shinyapps.io/activities_newfeatures/
+version: 1
+asMultiple: FALSE
+asStatic: FALSE

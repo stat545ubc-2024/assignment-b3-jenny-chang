@@ -36,25 +36,37 @@ activities <- activities %>%
 
 ui <- fluidPage(
   titlePanel("Baby Drop-in Activities in West Side Vancouver"),  
+  
   sidebarLayout(
     sidebarPanel(
-      img(src = "park.png", height = "160px"),  # NEW FEATURE: Image in the sidebar (park image)
+      # Image in the sidebar
+      img(src = "park.png", height = "160px"), 
       br(), br(), br(), 
-      selectInput("typeInput", "Activity Type",  # Dropdown to filter by activity type
+      # Dropdown to filter by activity type
+      selectInput("typeInput", "Activity Type",  
                   choices = c("All", "Babytime", "Storytime", "Family playtime", "Open gym", "Gymnastics", "Mama papa goose", "Music"),
                   selected = "All"),
-      checkboxGroupInput("dayInput", "Day of the Week", choices = day_order),  # Checkbox to filter by day
-      sliderInput("timeInput", "Activity Start Time",  # Time range slider
+      # Checkbox to filter by day
+      checkboxGroupInput("dayInput", "Day of the Week", choices = day_order), 
+      # Time range slider
+      sliderInput("timeInput", "Activity Start Time",  
                   min = format_time("09:00", parse = TRUE), 
                   max = format_time("16:00", parse = TRUE), 
                   value = c(format_time("09:00", parse = TRUE), format_time("16:00", parse = TRUE)), 
                   timeFormat = "%H:%M", step = 1800), 
-      downloadButton("downloadData", "Download .csv")  # Button to download filtered data as CSV
+      # Button to download filtered data as CSV
+      downloadButton("downloadData", "Download .csv")  
     ),
+    
     mainPanel(
-      p(h2("Welcome!")),  
-      p("This is a list of free or low-cost classes and gyms that you can go to with your baby in West Side Vancouver."),
-      tabsetPanel(  # NEW FEATURE: Tabset panel to toggle between views
+      p(h2("Welcome!")),
+      br(),
+      p("This is a list of free or low-cost classes and gyms that you can go to with your baby in West Side Vancouver. Options range from community centre drop-in gyms, non-profits, like neighbourhood houses and family places, and other 'free play' spaces."),
+      p("From the left navigation panel you'll be able to filter by activity type, day of the week, and start time. You can also view the options in either a table or map format."),
+      p(em("Please note: The drop-in schedule is subject to change. For the most up-to-date information on times and dates, please consult the official website.")),
+      br(),
+      # NEW FEATURE: Tabset panel to toggle between views
+      tabsetPanel(  
         id = "viewType",
         tabPanel("Table View", DTOutput("results")), 
         tabPanel("Map View", leafletOutput("activityMap", height = "500px")) 
@@ -100,10 +112,8 @@ server <- function(input, output, session) {
       rename(Start = StartFormatted, End = EndFormatted)  
     
     if (nrow(data) == 0) {
-      # Display a message if no activities match the filter criteria
       datatable(data.frame(Message = "No activities match your criteria."), options = list(pageLength = 10), rownames = FALSE)
     } else {
-      # Display the filtered data in a table format
       datatable(data, options = list(pageLength = 10, autoWidth = TRUE), rownames = FALSE)
     }
   })
