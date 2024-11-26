@@ -1,9 +1,8 @@
 ### Overview
 
-This Shiny application allows users to explore various **baby drop-in activities** available in West Side Vancouver. The app provides an interactive interface to filter, view, and explore activities based on activity type, location, time, price, and prebooking requirements. 
+This Shiny application allows users to explore various **baby drop-in activities** available in West Side Vancouver. The app provides an interactive interface to filter, view, and explore activities based on activity type, location, time, price, and prebooking requirements.
 
-The `main branch` in this github repo contains the first version of the app, while the `new_features` branch contains the updated version. 
-For both branches, the folder 'activities' contains the dataset `activities.csv`, the code for the app `app.R`, and a www folder for storing the image file.
+The folder `b3_activities` contains the first version of the app, which can be found at <https://jennychang.shinyapps.io/activities/>. The folder `b4_activities` contains the updated version of the app, which can be found at <https://jennychang.shinyapps.io/activities_newfeatures/>. Both folders contain the dataset `activities.csv`, the code for the app `app.R`, and a www folder for storing the image file, if used.
 
 ### Features
 
