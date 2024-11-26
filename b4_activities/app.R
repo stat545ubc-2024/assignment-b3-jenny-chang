@@ -40,7 +40,7 @@ ui <- fluidPage(
   sidebarLayout(
     sidebarPanel(
       # Image in the sidebar
-      img(src = "park.png", height = "160px"), 
+      img(src = "park.png", height = "200px", style = "display: block; margin-left: auto; margin-right: auto;"),
       br(), br(), br(), 
       # Dropdown to filter by activity type
       selectInput("typeInput", "Activity Type",  
@@ -62,7 +62,7 @@ ui <- fluidPage(
       p(h2("Welcome!")),
       br(),
       p("This is a list of free or low-cost classes and gyms that you can go to with your baby in West Side Vancouver. Options range from community centre drop-in gyms, non-profits, like neighbourhood houses and family places, and other 'free play' spaces."),
-      p("From the left navigation panel you'll be able to filter by activity type, day of the week, and start time. You can also view the options in either a table or map format."),
+      p("You can also view the options in either a table or map format. From the left navigation panel you'll be able to filter by activity type, day of the week, and start time. "),
       p(em("Please note: The drop-in schedule is subject to change. For the most up-to-date information on times and dates, please consult the official website.")),
       br(),
       # NEW FEATURE: Tabset panel to toggle between views
@@ -108,8 +108,11 @@ server <- function(input, output, session) {
   # NEW FEATURE: Render the activity data in a table format
   output$results <- renderDT({
     data <- filtered_data() %>%
-      select(-Latitude, -Longitude, -Start, -End) %>% 
-      rename(Start = StartFormatted, End = EndFormatted)  
+      select(`Activity type`, Day, StartFormatted, EndFormatted, Location, Age, Price, `Prebooking required`) %>% 
+      rename(
+        Start = StartFormatted,
+        End = EndFormatted
+      ) 
     
     if (nrow(data) == 0) {
       datatable(data.frame(Message = "No activities match your criteria."), options = list(pageLength = 10), rownames = FALSE)
