@@ -1,0 +1,33 @@
+﻿Activity,Day,Start,End,Location,Age,Price,Prebooking
+Babytime,Wednesday,11:00,11:30,Kitsilano library,0 - 18m,0,No
+Babytime,Thursday,11:00,11:30,Kitsilano library,0 - 18m,0,No
+Babytime,Friday,10:00,10:30,Dunbar library,0 - 18m,0,No
+Babytime,Friday,10:30,11:00,West point grey library,0 - 18m,0,No
+Storytime,Wednesday,11:15,11:45,West point grey library,all ages,0,No
+Storytime,Friday,11:00,11:30,Dunbar library,all ages,0,No
+Storytime,Sunday,11:00,11:30,Kitsilano library,all ages,0,No
+Open gym,Tuesday,10:00,11:30,Wesbrook community centre,0 - 5yr,3.5,No
+Open gym,Thursday,10:00,11:30,Wesbrook community centre,0 - 5yr,3.5,No
+Babytime,Thursday,10:00,11:00,Wesbrook community centre,0 - 12mo,0,No
+Storytime,Friday,10:00,11:00,Old barn community centre,all ages,0,No
+Open gym,Sunday,10:00,11:30,Old barn community centre,0 - 5yr,3.5,No
+Gymnastics,Wednesday,11:00,12:00,UBC school of kinesiology,0-13 years,5,Yes
+Open gym,Saturday,9:00,11:00,Dunbar community centre,6mo - 6yr,3,No
+Open gym,Tuesday,9:30,11:00,Kitsilano community centre,6mo - 5yr,3,No
+Open gym,Thursday,10:30,12:00,Kitsilano community centre,6mo - 5yr,3,No
+Open gym,Saturday,10:30,12:00,Kitsilano community centre,6mo - 5yr,3,No
+Open gym,Sunday,9:30,11:00,West point grey community centre,6mo - 5yr,3.75,No
+Open gym,Saturday,9:30,11:00,West point grey community centre,6mo - 5yr,3.75,No
+Family playtime,Monday,10:00,11:30,Kitsilano neighborhood house,0 - 6yr,2,Yes
+Family playtime,Wednesday,10:00,11:30,Kitsilano neighborhood house,0 - 6yr,2,Yes
+Family playtime,Friday,10:00,11:30,Kitsilano neighborhood house,0 - 6yr,2,Yes
+Mama papa goose,Wednesday,13:30,14:30,Westside family place,0 - 12mo,4,Yes
+Music,Thursday,12:30,13:30,Westside family place,18m - 4yr,10,Yes
+Family playtime,Monday,9:30,12:00,Westside family place,0 - 5yr,4,Yes
+Family playtime,Tuesday,9:30,12:00,Westside family place,0 - 5yr,4,Yes
+Family playtime,Wednesday,9:30,12:00,Westside family place,0 - 5yr,4,Yes
+Family playtime,Thursday,9:30,12:00,Westside family place,0 - 5yr,4,Yes
+Family playtime,Friday,9:30,12:00,Westside family place,0 - 5yr,4,Yes
+Family playtime,Tuesday,13:30,15:00,Westside family place,0 - 18m,4,Yes
+Gymnastics,Thursday,11:30,12:25,St. James,1 - 12yr,13,Yes
+Family playtime,Wednesday,12:00,13:30,Chorus and clouds,0 - 5yr,0,No
