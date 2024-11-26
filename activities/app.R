@@ -1,124 +1,144 @@
-library(shiny)
-library(ggplot2)
-library(dplyr)
-library(stringr)
+library(shiny)      
+library(dplyr)   
+library(DT)          
+library(lubridate)  
+library(leaflet)    
+library(scales)   
 
-# Read in the activities data
 activities <- read.csv("activities.csv", stringsAsFactors = FALSE)
 
-# Convert Start column to POSIXct format, ensuring it's in the correct timezone
-activities$Start <- as.POSIXct(activities$Start, format = "%H:%M", tz = "America/Vancouver")
-
-# Define the custom order for days of the week
+# Define the order of days for the Day filter
 day_order <- c("Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday")
-activities$Day <- factor(activities$Day, levels = day_order)
 
-# Sort the initial activities data by Day and Start time
+# Function to format time
+format_time <- function(x, parse = FALSE, tz = "America/Vancouver") {
+  if (parse) {
+    as.POSIXct(x, format = "%H:%M", tz = tz) 
+  } else {
+    format(x, "%H:%M") 
+  }
+}
+
+# Preprocess the activities data
 activities <- activities %>%
-  arrange(Day, Start)
+  mutate(
+    Start = format_time(Start, parse = TRUE),  
+    End = format_time(End, parse = TRUE),      
+    Day = factor(Day, levels = day_order),  
+    Price = dollar(Price)                   
+  ) %>%
+  rename(
+    'Prebooking required' = Prebooking,        
+    'Activity type' = Activity
+  ) %>%
+  arrange(Day, Start)                      
+
 
 ui <- fluidPage(
-  titlePanel("Baby Drop-in Activities in West Side Vancouver"),
+  titlePanel("Baby Drop-in Activities in West Side Vancouver"),  
   sidebarLayout(
     sidebarPanel(
-
-###### 1. Select Input: Allows the user to choose a single type of activity to filter the data. ######
-      selectInput("typeInput", "Activity",
+      img(src = "park.png", height = "160px"),  # NEW FEATURE: Image in the sidebar (park image)
+      br(), br(), br(), 
+      selectInput("typeInput", "Activity Type",  # Dropdown to filter by activity type
                   choices = c("All", "Babytime", "Storytime", "Family playtime", "Open gym", "Gymnastics", "Mama papa goose", "Music"),
                   selected = "All"),
-###### 2. Checkbox Group Input: Allows the user to select multiple days of the week to filter the data. ######
-      checkboxGroupInput("dayInput", "Day of the week",
-                         choices = day_order),
-
-###### 3. Slider Input: Allows the user to filter activities by start time using a range slider. ######
-      sliderInput("timeInput", "Start time", 
-                  min = as.POSIXct("09:00", format = "%H:%M", tz = "America/Vancouver"), 
-                  max = as.POSIXct("16:00", format = "%H:%M", tz = "America/Vancouver"), 
-                  value = c(as.POSIXct("09:00", format = "%H:%M", tz = "America/Vancouver"), 
-                            as.POSIXct("16:00", format = "%H:%M", tz = "America/Vancouver")), 
-                  timeFormat = "%H:%M", step = 1800),
-
-###### 4. Text input: Allows the user search for activities/locations via keyword search. ######
-      textInput("searchInput", "Search by keyword", value = ""),  
-
-###### 5. Action button: Allows the user to reset the inputs. ######
-      actionButton("reset", "Reset", class = "btn-primary")  
+      checkboxGroupInput("dayInput", "Day of the Week", choices = day_order),  # Checkbox to filter by day
+      sliderInput("timeInput", "Activity Start Time",  # Time range slider
+                  min = format_time("09:00", parse = TRUE), 
+                  max = format_time("16:00", parse = TRUE), 
+                  value = c(format_time("09:00", parse = TRUE), format_time("16:00", parse = TRUE)), 
+                  timeFormat = "%H:%M", step = 1800), 
+      downloadButton("downloadData", "Download .csv")  # Button to download filtered data as CSV
     ),
-
-
     mainPanel(
-      
-###### 6. Download button: Allows the user to download the data as a .csv file. ######
-      downloadButton("downloadData", "Download .csv"),  # Download button above the table
-
-      br(), br(),  
-      p("Please note that the drop-in schedule is subject to change. For the most up-to-date information on times and dates, please consult the official website."),  # Added message
-      br(),
-      tableOutput("results"),
-
-###### 7. fluidRow: Counts the number of rows in the table. ######
-      fluidRow(
-        column(6),  # Leave space on the left side
-        column(6, align = "right", textOutput("resultCount")) 
-      )
+      p(h2("Welcome!")),  
+      p("This is a list of free or low-cost classes and gyms that you can go to with your baby in West Side Vancouver."),
+      tabsetPanel(  # NEW FEATURE: Tabset panel to toggle between views
+        id = "viewType",
+        tabPanel("Table View", DTOutput("results")), 
+        tabPanel("Map View", leafletOutput("activityMap", height = "500px")) 
+      ),
+      textOutput("resultCount") 
     )
   )
 )
 
+
 server <- function(input, output, session) {
   
-  # Reactive expression to store filtered data
+  # Reactive function to parse the selected time input (start and end time)
+  reactive_time_input <- reactive({
+    list(
+      start = format_time(input$timeInput[1], parse = TRUE),
+      end = format_time(input$timeInput[2], parse = TRUE)
+    )
+  })
+  
+  # Reactive filtered data based on user input 
   filtered_data <- reactive({
-    filtered <- activities %>%
-      filter(
-        if (input$typeInput != "All") Activity == input$typeInput else TRUE,  # Filter by activity
-        if (length(input$dayInput) > 0) Day %in% input$dayInput else TRUE,  # Filter by selected days
-        Start >= input$timeInput[1],  # Filter by start time
-        Start <= input$timeInput[2],  # Filter by end time
-        if (input$searchInput != "") 
-          (str_detect(Activity, regex(input$searchInput, ignore_case = TRUE)) |
-             str_detect(Location, regex(input$searchInput, ignore_case = TRUE)) |
-             str_detect(Day, regex(input$searchInput, ignore_case = TRUE)) |
-             str_detect(Prebooking, regex(input$searchInput, ignore_case = TRUE))) 
-        else TRUE  # Search across multiple columns 
-      ) %>%
-      mutate(Start = format(Start, "%H:%M"),
-             Prebooking = ifelse(Prebooking == 1, "Yes", "No")
-      ) %>%
-      arrange(Day, Start)  # Sort by Day and Start time
+    time_bounds <- reactive_time_input()  # Get the selected time bounds
     
-    return(filtered)
+    activities %>%
+      filter(
+        if (input$typeInput != "All") `Activity type` == input$typeInput else TRUE,
+        if (length(input$dayInput) > 0) Day %in% input$dayInput else TRUE,  
+        Start >= time_bounds$start,  
+        Start <= time_bounds$end    
+      ) %>%
+      mutate(
+        StartFormatted = format_time(Start),  
+        EndFormatted = format_time(End)       
+      ) %>%
+      arrange(Day, Start)  
   })
   
-  # Render the filtered data in the table
-  output$results <- renderTable({
-    filtered_data()
+  # NEW FEATURE: Render the activity data in a table format
+  output$results <- renderDT({
+    data <- filtered_data() %>%
+      select(-Latitude, -Longitude, -Start, -End) %>% 
+      rename(Start = StartFormatted, End = EndFormatted)  
+    
+    if (nrow(data) == 0) {
+      # Display a message if no activities match the filter criteria
+      datatable(data.frame(Message = "No activities match your criteria."), options = list(pageLength = 10), rownames = FALSE)
+    } else {
+      # Display the filtered data in a table format
+      datatable(data, options = list(pageLength = 10, autoWidth = TRUE), rownames = FALSE)
+    }
   })
   
-  # Show the number of results found
-  output$resultCount <- renderText({
-    n <- nrow(filtered_data())
-    paste("Number of results found:", n)
+  # NEW FEATURE: Render the activity data on a map
+  output$activityMap <- renderLeaflet({
+    data <- filtered_data() 
+    
+    leaflet(data = data) %>%
+      addProviderTiles("CartoDB.Positron") %>%  
+      setView(lng = -123.17220, lat = 49.25983, zoom = 12) %>%  
+      addMarkers(
+        ~Longitude, ~Latitude, 
+        popup = ~paste(
+          "<strong>Activity type:</strong>", `Activity type`, "<br>",
+          "<strong>Location:</strong>", Location, "<br>",
+          "<strong>Day:</strong>", Day, "<br>",
+          "<strong>Time:</strong>", StartFormatted, "-", EndFormatted, "<br>",
+          "<strong>Price:</strong>", Price, "<br>",
+          "<strong>Prebooking required:</strong>", `Prebooking required`
+        ),
+        clusterOptions = markerClusterOptions()  
+      )
   })
   
-  # Download the filtered data
+  # Allow users to download the filtered data as a CSV file
   output$downloadData <- downloadHandler(
     filename = function() {
-      paste("filtered_activities_", Sys.Date(), ".csv", sep = "")
+      paste("filtered_activities_", Sys.Date(), ".csv", sep = "")  
     },
     content = function(file) {
-      write.csv(filtered_data(), file, row.names = FALSE)
+      write.csv(filtered_data(), file, row.names = FALSE)  
     }
   )
-  
-  # Reset button
-  observeEvent(input$reset, {
-    updateSelectInput(session, "typeInput", selected = "All")
-    updateCheckboxGroupInput(session, "dayInput", selected = day_order)
-    updateSliderInput(session, "timeInput", value = c(as.POSIXct("09:00", format = "%H:%M", tz = "America/Vancouver"), 
-                                                      as.POSIXct("16:00", format = "%H:%M", tz = "America/Vancouver")))
-    updateTextInput(session, "searchInput", value = "")
-  })
 }
+
 
 shinyApp(ui = ui, server = server)
